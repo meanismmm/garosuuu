@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>가로수 블로그 글 생성기</title>
+<title>블로그 글 생성기</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
   :root {
@@ -106,8 +106,8 @@
 <header>
   <div class="logo-mark"><span>🌿</span></div>
   <div class="header-text">
-    <h1>가로수 블로그 글 생성기</h1>
-    <p>가로수 정신건강의학과 · 이성철 원장 블로그 자동화 시스템</p>
+    <h1>블로그 글 생성기</h1>
+    <p>정신건강의학과 · 블로그 자동화 시스템</p>
   </div>
   <div class="header-badge" id="statsBadge">오늘 생성: 0편</div>
 </header>
@@ -115,7 +115,7 @@
   <div class="panel">
     <div class="panel-header">
       <h2>📝 오늘의 포스팅 설정</h2>
-      <p>주제와 키워드를 선택하면 가로수 블로그 스타일로 글을 생성합니다.</p>
+      <p>주제와 키워드를 선택하면 정신과 블로그 스타일로 글을 생성합니다.</p>
     </div>
     <div class="panel-body">
       <div class="api-box">
@@ -187,7 +187,7 @@
   <div class="panel output-panel">
     <div class="output-placeholder" id="placeholderState">
       <div class="icon">🌳</div>
-      <p>왼쪽에서 주제와 설정을 선택한 후<br><strong>생성 버튼</strong>을 누르면<br>가로수 스타일의 블로그 글이 완성됩니다.</p>
+      <p>왼쪽에서 주제와 설정을 선택한 후<br><strong>생성 버튼</strong>을 누르면<br>정신과 스타일의 블로그 글이 완성됩니다.</p>
     </div>
     <div class="loading-state" id="loadingState">
       <span class="tree-animation">🌿</span>
@@ -218,9 +218,9 @@
         <div class="preview-meta" id="previewMeta"></div>
         <div class="preview-title" id="previewTitle"></div>
         <div class="preview-subtitle" id="previewSubtitle"></div>
-        <div class="preview-clinic">가로수정신건강의학과의원<br>인천광역시 남동구 논고개로 114 2층</div>
+        <div class="preview-clinic">병원정보<br>주소정보</div>
         <div class="preview-body" id="previewBody"></div>
-        <div class="preview-signature">인천 가로수 정신건강의학과 이성철 원장</div>
+        <div class="preview-signature">서명위치</div>
       </div>
     </div>
   </div>
@@ -265,7 +265,7 @@
     if (state!=='resultState') document.getElementById('obsidianGuide').style.display='none';
   }
 
-  const loadingMessages = ['가로수 스타일로 도입부를 쓰고 있습니다...','환자분들의 마음을 담아 글을 다듬고 있습니다...','의학적 정보를 쉽게 풀어쓰고 있습니다...','따뜻한 마무리를 작성하고 있습니다...'];
+  const loadingMessages = ['정신과 스타일로 도입부를 쓰고 있습니다...','환자분들의 마음을 담아 글을 다듬고 있습니다...','의학적 정보를 쉽게 풀어쓰고 있습니다...','따뜻한 마무리를 작성하고 있습니다...'];
 
   async function generatePost() {
     if (!selectedTags.category) { alert('주제 카테고리를 하나 선택해주세요.'); return; }
@@ -282,7 +282,7 @@
     const introStyle=document.getElementById('introStyle').value, extraNote=document.getElementById('extraNote').value;
 
     const randomSeed = Math.floor(Math.random() * 99999);
-    const systemPrompt = `당신은 인천 가로수 정신건강의학과 이성철 원장입니다. 아래 원칙으로 네이버 블로그 포스팅을 작성하세요. (seed:${randomSeed})
+    const systemPrompt = `당신은 정신건강의학과 원장입니다. 아래 원칙으로 네이버 블로그 포스팅을 작성하세요. (seed:${randomSeed})
 
 [글쓰기 원칙]
 1. 톤: 따뜻하고 공감하는 전문가. 독자를 "여러분"으로. 격식체(~입니다,~지요) 사용, 거리감 없게.
@@ -302,12 +302,12 @@
 
 5. 〈꺾쇠괄호〉로 핵심 대비 개념 강조 (예: 〈성격〉이 아닌 〈질환〉)
 
-6. SEO: "인천 정신과", "가로수 정신건강의학과" 자연스럽게 1~2회
+6. SEO: "인천 정신과", "정신건강의학과" 자연스럽게 1~2회
 
 7. 분량: 공백 미포함 1800~2000자. 단락을 충분히 나눠 깊이 있게 서술. 이 분량을 반드시 채울 것.
 
 [응답: JSON만, 마크다운 없이]
-{"title":"제목('독자공감'...주제_인천 정신과 가로수)","subtitle":"감성 한 줄","body":"본문(단락구분 \\n\\n)","tags":["태그1","태그2","태그3","태그4","태그5"]}`;
+{"title":"제목('독자공감'...주제_인천 정신과)","subtitle":"감성 한 줄","body":"본문(단락구분 \\n\\n)","tags":["태그1","태그2","태그3","태그4","태그5"]}`;
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -352,7 +352,7 @@
   function copyPost() {
     if (!currentPost) return;
     const body=Array.from(document.getElementById('previewBody').querySelectorAll('p')).map(p=>p.textContent).join('\n\n');
-    navigator.clipboard.writeText(`${currentPost.title}\n\n${currentPost.subtitle}\n\n가로수정신건강의학과의원\n인천광역시 남동구 논고개로 114 2층\n\n${body}\n\n인천 가로수 정신건강의학과 이성철 원장`).then(()=>showToast('toastCopy'));
+    navigator.clipboard.writeText(`${currentPost.title}\n\n${currentPost.subtitle}\n\n정신건강의학과의원\n주소\n\n${body}\n\n서명 원장`).then(()=>showToast('toastCopy'));
   }
 
   function saveToObsidian() {
@@ -360,7 +360,7 @@
     const today=new Date(), dateStr=today.toISOString().split('T')[0];
     const dateKo=today.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
     const body=Array.from(document.getElementById('previewBody').querySelectorAll('p')).map(p=>p.textContent).join('\n\n');
-    const md=`---\ntitle: "${currentPost.title}"\ndate: ${dateStr}\ncategory: ${currentPost.category}\naudience: ${currentPost.audience}\ntags: [${currentPost.tags?.map(t=>`"${t}"`).join(', ')||''}]\nstatus: 검토중\n---\n\n# ${currentPost.title}\n\n> ${currentPost.subtitle}\n\n**가로수정신건강의학과의원**\n인천광역시 남동구 논고개로 114 2층\n\n---\n\n${body}\n\n---\n\n**인천 가로수 정신건강의학과 이성철 원장**\n\n*생성일: ${dateKo}*\n`;
+    const md=`---\ntitle: "${currentPost.title}"\ndate: ${dateStr}\ncategory: ${currentPost.category}\naudience: ${currentPost.audience}\ntags: [${currentPost.tags?.map(t=>`"${t}"`).join(', ')||''}]\nstatus: 검토중\n---\n\n# ${currentPost.title}\n\n> ${currentPost.subtitle}\n\n**정신건강의학과의원**\n주소\n\n---\n\n${body}\n\n---\n\n**서명 원장**\n\n*생성일: ${dateKo}*\n`;
     const filename=`${dateStr}-${currentPost.category.replace(/[·\s\/]/g,'_')}.md`;
     const blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
     const url=URL.createObjectURL(blob);
