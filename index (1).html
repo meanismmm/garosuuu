@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가로수 블로그 글 생성기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+  :root {
+    --sage:#6b8f71; --sage-light:#a8c5ad; --sage-pale:#e8f0e9;
+    --bark:#4a3f35; --bark-light:#7a6a5e;
+    --cream:#f7f4ef; --white:#ffffff;
+    --text:#2d2a27; --text-muted:#7a6a5e;
+    --border:#d8cfc4; --shadow:0 4px 24px rgba(74,63,53,0.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--white);border-bottom:1px solid var(--border);padding:18px 40px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(74,63,53,0.07);}
+  .logo-mark{width:36px;height:36px;background:var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .logo-mark span{color:white;font-size:16px;}
+  .header-text h1{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;color:var(--bark);letter-spacing:-0.3px;}
+  .header-text p{font-size:11px;color:var(--text-muted);margin-top:1px;}
+  .header-badge{margin-left:auto;font-size:11px;background:var(--sage-pale);color:var(--sage);padding:4px 12px;border-radius:20px;font-weight:500;}
+  .container{max-width:1100px;margin:0 auto;padding:36px 24px;display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:start;}
+  .panel{background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+  .panel-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--sage-pale);}
+  .panel-header h2{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;color:var(--bark);display:flex;align-items:center;gap:8px;}
+  .panel-header p{font-size:12px;color:var(--text-muted);margin-top:5px;line-height:1.6;}
+  .panel-body{padding:24px;}
+  .form-group{margin-bottom:20px;}
+  label{display:block;font-size:12px;font-weight:500;color:var(--bark);margin-bottom:7px;letter-spacing:0.3px;}
+  .badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;margin-left:6px;font-weight:400;}
+  .badge-required{background:#fde8e8;color:#c0392b;}
+  .badge-opt{background:var(--sage-pale);color:var(--sage);}
+  select,textarea{width:100%;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--text);background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;transition:border-color 0.2s,box-shadow 0.2s;outline:none;resize:none;}
+  select:focus,textarea:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(107,143,113,0.12);background:var(--white);}
+  textarea{line-height:1.7;}
+  .api-box{background:#fffbf0;border:1.5px solid #f0e0a0;border-radius:12px;padding:16px;margin-bottom:20px;}
+  .api-box label{color:#7a5c00;}
+  .api-row{display:flex;gap:8px;margin-top:4px;}
+  .api-row input{flex:1;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--text);background:white;border:1.5px solid #e8d080;border-radius:8px;padding:8px 12px;outline:none;transition:border-color 0.2s;}
+  .api-row input:focus{border-color:#c0a030;}
+  .btn-save-key{background:#e8c030;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;transition:background 0.15s;}
+  .btn-save-key:hover{background:#d0aa20;}
+  .api-status{font-size:11px;margin-top:7px;line-height:1.6;}
+  .api-status.ok{color:#2e7d32;}
+  .api-status.empty{color:#9a7c30;}
+  .tag-group{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+  .tag{font-size:12px;padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--bark-light);cursor:pointer;transition:all 0.18s;user-select:none;}
+  .tag:hover{border-color:var(--sage-light);color:var(--sage);}
+  .tag.active{background:var(--sage);border-color:var(--sage);color:white;}
+  .btn-generate{width:100%;background:var(--sage);color:white;border:none;border-radius:12px;padding:14px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;margin-top:24px;box-shadow:0 4px 16px rgba(107,143,113,0.3);}
+  .btn-generate:hover{background:#5a7d60;transform:translateY(-1px);box-shadow:0 6px 20px rgba(107,143,113,0.35);}
+  .btn-generate:active{transform:translateY(0);}
+  .btn-generate:disabled{background:var(--sage-light);cursor:not-allowed;transform:none;}
+  .output-panel{position:sticky;top:90px;}
+  .output-placeholder{padding:60px 24px;text-align:center;}
+  .output-placeholder .icon{font-size:42px;margin-bottom:16px;opacity:0.4;}
+  .output-placeholder p{font-size:13px;color:var(--text-muted);line-height:1.8;}
+  .loading-state{padding:60px 24px;text-align:center;display:none;}
+  .tree-animation{font-size:36px;display:block;margin-bottom:16px;animation:sway 2s ease-in-out infinite;}
+  @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  .loading-dots span{display:inline-block;width:7px;height:7px;background:var(--sage);border-radius:50%;margin:0 3px;animation:bounce 1.2s ease-in-out infinite;}
+  .loading-dots span:nth-child(2){animation-delay:0.2s}.loading-dots span:nth-child(3){animation-delay:0.4s}
+  @keyframes bounce{0%,80%,100%{transform:scale(0.6);opacity:0.5}40%{transform:scale(1);opacity:1}}
+  .loading-msg{font-size:13px;color:var(--text-muted);margin-top:14px;}
+  .result-state{display:none;}
+  .result-toolbar{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--sage-pale);gap:10px;flex-wrap:wrap;}
+  .result-toolbar .label{font-size:12px;font-weight:500;color:var(--sage);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn-action{font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:500;transition:all 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+  .btn-copy{background:var(--bark);color:white;}
+  .btn-copy:hover{background:#3a302a;}
+  .btn-obsidian{background:#6c5ce7;color:white;box-shadow:0 3px 10px rgba(108,92,231,0.3);}
+  .btn-obsidian:hover{background:#5b4dd6;transform:translateY(-1px);}
+  .btn-regen{background:white;color:var(--text-muted);border:1px solid var(--border);}
+  .btn-regen:hover{color:var(--sage);border-color:var(--sage);}
+  .obsidian-guide{display:none;margin:16px 20px 0;background:#f3f0ff;border:1.5px solid #c4b8f8;border-radius:10px;padding:13px 16px;font-size:12px;color:#4a3fa0;line-height:1.8;}
+  .obsidian-guide .step{display:flex;align-items:flex-start;gap:8px;margin-bottom:4px;}
+  .obsidian-guide .num{background:#6c5ce7;color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .blog-preview{padding:28px 30px;max-height:560px;overflow-y:auto;}
+  .blog-preview::-webkit-scrollbar{width:5px}.blog-preview::-webkit-scrollbar-track{background:var(--cream)}.blog-preview::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+  .preview-meta{font-size:11px;color:var(--text-muted);margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .preview-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:600;color:var(--bark);line-height:1.55;margin-bottom:10px;}
+  .preview-subtitle{font-size:13px;color:var(--sage);font-style:italic;margin-bottom:20px;line-height:1.7;padding-left:12px;border-left:3px solid var(--sage-light);}
+  .preview-clinic{font-size:12px;color:var(--text-muted);margin-bottom:20px;font-weight:500;}
+  .preview-body{font-size:13.5px;line-height:2.0;color:var(--text);}
+  .preview-body p{margin-bottom:18px;}
+  .preview-signature{margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:13px;color:var(--bark-light);font-weight:500;}
+  .error-state{display:none;padding:30px 24px;text-align:center;}
+  .error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:20px;}
+  .error-box p{font-size:13px;color:#b91c1c;line-height:1.7;white-space:pre-wrap;}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);color:white;padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast-copy{background:var(--bark);}
+  .toast-obsidian{background:#6c5ce7;}
+  @media(max-width:780px){
+    .container{grid-template-columns:1fr;}
+    .output-panel{position:static;}
+    header{padding:14px 20px;}
+    .result-toolbar{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-mark"><span>🌿</span></div>
+  <div class="header-text">
+    <h1>가로수 블로그 글 생성기</h1>
+    <p>가로수 정신건강의학과 · 이성철 원장 블로그 자동화 시스템</p>
+  </div>
+  <div class="header-badge" id="statsBadge">오늘 생성: 0편</div>
+</header>
+<div class="container">
+  <div class="panel">
+    <div class="panel-header">
+      <h2>📝 오늘의 포스팅 설정</h2>
+      <p>주제와 키워드를 선택하면 가로수 블로그 스타일로 글을 생성합니다.</p>
+    </div>
+    <div class="panel-body">
+      <div class="api-box">
+        <label>🔑 Claude API 키 <span class="badge badge-required">필수</span></label>
+        <div class="api-row">
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+          <button class="btn-save-key" onclick="saveApiKey()">저장</button>
+        </div>
+        <div class="api-status empty" id="apiKeyStatus">API 키를 입력 후 저장하면 이 브라우저에 기억됩니다.</div>
+      </div>
+      <div class="form-group">
+        <label>주제 카테고리 <span class="badge badge-required">필수</span></label>
+        <div class="tag-group" id="categoryTags">
+          <span class="tag" onclick="toggleTag(this,'category')">우울증</span>
+          <span class="tag" onclick="toggleTag(this,'category')">불안장애</span>
+          <span class="tag" onclick="toggleTag(this,'category')">공황장애</span>
+          <span class="tag" onclick="toggleTag(this,'category')">ADHD</span>
+          <span class="tag" onclick="toggleTag(this,'category')">수면장애</span>
+          <span class="tag" onclick="toggleTag(this,'category')">번아웃</span>
+          <span class="tag" onclick="toggleTag(this,'category')">강박증</span>
+          <span class="tag" onclick="toggleTag(this,'category')">정신과 편견</span>
+          <span class="tag" onclick="toggleTag(this,'category')">자존감</span>
+          <span class="tag" onclick="toggleTag(this,'category')">트라우마·PTSD</span>
+          <span class="tag" onclick="toggleTag(this,'category')">조울증</span>
+          <span class="tag" onclick="toggleTag(this,'category')">대인관계</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>독자 대상 <span class="badge badge-required">필수</span></label>
+        <div class="tag-group" id="audienceTags">
+          <span class="tag active" onclick="toggleTag(this,'audience')">치료 망설이는 분</span>
+          <span class="tag" onclick="toggleTag(this,'audience')">증상을 가진 본인</span>
+          <span class="tag" onclick="toggleTag(this,'audience')">보호자·가족</span>
+          <span class="tag" onclick="toggleTag(this,'audience')">직장인</span>
+          <span class="tag" onclick="toggleTag(this,'audience')">학생·청년</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>시의성 키워드 <span class="badge badge-opt">선택</span></label>
+        <div class="tag-group" id="seasonTags">
+          <span class="tag" onclick="toggleTag(this,'season')">봄 환절기</span>
+          <span class="tag" onclick="toggleTag(this,'season')">연말·새해</span>
+          <span class="tag" onclick="toggleTag(this,'season')">취업 시즌</span>
+          <span class="tag" onclick="toggleTag(this,'season')">수능·입시</span>
+          <span class="tag" onclick="toggleTag(this,'season')">여름 더위</span>
+          <span class="tag" onclick="toggleTag(this,'season')">가을 우울</span>
+          <span class="tag" onclick="toggleTag(this,'season')">황사·미세먼지</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>특별히 강조할 내용 <span class="badge badge-opt">선택</span></label>
+        <textarea id="extraNote" rows="3" placeholder="예) '정신과 기록 걱정하는 분들을 위한 내용 포함해주세요'"></textarea>
+      </div>
+      <div class="form-group">
+        <label>도입부 분위기 <span class="badge badge-required">필수</span></label>
+        <select id="introStyle">
+          <option value="계절/날씨 비유">🌿 계절·날씨 비유 (기본 스타일)</option>
+          <option value="진료실 에피소드">💬 진료실 에피소드로 시작</option>
+          <option value="독자 내면 독백">🧠 독자의 내면 독백 인용</option>
+          <option value="통계/사실">📊 통계·사실로 시작</option>
+          <option value="질문">❓ 독자에게 질문으로 시작</option>
+        </select>
+      </div>
+      <button class="btn-generate" id="generateBtn" onclick="generatePost()">
+        <span>✨</span> 오늘의 블로그 글 생성하기
+      </button>
+    </div>
+  </div>
+  <div class="panel output-panel">
+    <div class="output-placeholder" id="placeholderState">
+      <div class="icon">🌳</div>
+      <p>왼쪽에서 주제와 설정을 선택한 후<br><strong>생성 버튼</strong>을 누르면<br>가로수 스타일의 블로그 글이 완성됩니다.</p>
+    </div>
+    <div class="loading-state" id="loadingState">
+      <span class="tree-animation">🌿</span>
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p class="loading-msg" id="loadingMsg">글을 작성하고 있습니다...</p>
+    </div>
+    <div class="error-state" id="errorState">
+      <div class="error-box"><p id="errorMsg">오류가 발생했습니다.</p></div>
+    </div>
+    <div class="result-state" id="resultState">
+      <div class="result-toolbar">
+        <span class="label">✅ 생성 완료 · 원장님 검토 후 발행하세요</span>
+        <div class="toolbar-actions">
+          <button class="btn-action btn-regen" onclick="generatePost()">↻ 재생성</button>
+          <button class="btn-action btn-copy" onclick="copyPost()">📋 복사</button>
+          <button class="btn-action btn-obsidian" onclick="saveToObsidian()">🔮 Obsidian 저장</button>
+        </div>
+      </div>
+      <div class="obsidian-guide" id="obsidianGuide">
+        <strong>📥 Obsidian 저장 방법</strong>
+        <div style="margin-top:8px;">
+          <div class="step"><div class="num">1</div><div>.md 파일이 다운로드 폴더에 저장되었습니다.</div></div>
+          <div class="step"><div class="num">2</div><div>파일을 Obsidian Vault 폴더 안으로 드래그하세요.</div></div>
+          <div class="step"><div class="num">3</div><div>Obsidian Sync가 자동으로 모든 기기에 반영합니다. ✓</div></div>
+        </div>
+      </div>
+      <div class="blog-preview">
+        <div class="preview-meta" id="previewMeta"></div>
+        <div class="preview-title" id="previewTitle"></div>
+        <div class="preview-subtitle" id="previewSubtitle"></div>
+        <div class="preview-clinic">가로수정신건강의학과의원<br>인천광역시 남동구 논고개로 114 2층</div>
+        <div class="preview-body" id="previewBody"></div>
+        <div class="preview-signature">인천 가로수 정신건강의학과 이성철 원장</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast toast-copy" id="toastCopy">📋 클립보드에 복사되었습니다</div>
+<div class="toast toast-obsidian" id="toastObsidian">🔮 Obsidian 파일이 다운로드되었습니다</div>
+<script>
+  const selectedTags = { category:null, audience:'치료 망설이는 분', season:null };
+  let todayCount = 0, currentPost = null;
+
+  window.onload = function() {
+    const saved = localStorage.getItem('garosu_api_key');
+    if (saved) {
+      document.getElementById('apiKeyInput').value = saved;
+      document.getElementById('apiKeyStatus').textContent = '✅ API 키가 저장되어 있습니다. 바로 사용 가능합니다.';
+      document.getElementById('apiKeyStatus').className = 'api-status ok';
+    }
+  };
+
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key || !key.startsWith('sk-ant-')) { alert('올바른 API 키를 입력해주세요. (sk-ant-api03-... 형태)'); return; }
+    localStorage.setItem('garosu_api_key', key);
+    document.getElementById('apiKeyStatus').textContent = '✅ 저장 완료! 다음부터는 자동으로 불러옵니다.';
+    document.getElementById('apiKeyStatus').className = 'api-status ok';
+  }
+
+  function getApiKey() {
+    return document.getElementById('apiKeyInput').value.trim() || localStorage.getItem('garosu_api_key') || '';
+  }
+
+  function toggleTag(el, group) {
+    const mapId = { category:'categoryTags', audience:'audienceTags', season:'seasonTags' };
+    document.querySelectorAll('#'+mapId[group]+' .tag').forEach(t => t.classList.remove('active'));
+    if (selectedTags[group] === el.textContent) { selectedTags[group] = null; }
+    else { el.classList.add('active'); selectedTags[group] = el.textContent; }
+  }
+
+  function showState(state) {
+    ['placeholderState','loadingState','errorState','resultState'].forEach(id => document.getElementById(id).style.display='none');
+    document.getElementById(state).style.display='block';
+    if (state!=='resultState') document.getElementById('obsidianGuide').style.display='none';
+  }
+
+  const loadingMessages = ['가로수 스타일로 도입부를 쓰고 있습니다...','환자분들의 마음을 담아 글을 다듬고 있습니다...','의학적 정보를 쉽게 풀어쓰고 있습니다...','따뜻한 마무리를 작성하고 있습니다...'];
+
+  async function generatePost() {
+    if (!selectedTags.category) { alert('주제 카테고리를 하나 선택해주세요.'); return; }
+    const apiKey = getApiKey();
+    if (!apiKey) { alert('API 키를 입력해주세요.'); return; }
+
+    showState('loadingState');
+    document.getElementById('generateBtn').disabled = true;
+    let msgIdx = 0;
+    document.getElementById('loadingMsg').textContent = loadingMessages[0];
+    const msgInterval = setInterval(() => { msgIdx=(msgIdx+1)%loadingMessages.length; document.getElementById('loadingMsg').textContent=loadingMessages[msgIdx]; }, 2200);
+
+    const category=selectedTags.category, audience=selectedTags.audience||'일반 독자', season=selectedTags.season||'';
+    const introStyle=document.getElementById('introStyle').value, extraNote=document.getElementById('extraNote').value;
+
+    const systemPrompt = `당신은 인천 가로수 정신건강의학과 이성철 원장입니다. 아래 원칙으로 네이버 블로그 포스팅을 작성하세요.
+
+[글쓰기 원칙]
+1. 톤: 따뜻하고 공감하는 전문가. 독자를 "여러분"으로. 격식체(~입니다,~지요) 사용, 거리감 없게.
+2. 구조: 감성적 도입 → 진료실 에피소드 → 질환 설명 → 의학적 설명(비유포함) → 방치 위험성 → 치료 방향 → 따뜻한 마무리(광고 금지)
+3. 자연/날씨 비유로 의학 개념 설명
+4. 환자 내면 독백 따옴표로 1~2개 포함
+5. 〈꺾쇠괄호〉로 핵심 대비 개념 강조
+6. "인천 정신과", "가로수 정신건강의학과" 자연스럽게 1~2회
+7. 800~1000자
+
+[응답: JSON만, 마크다운 없이]
+{"title":"제목('독자공감'...주제_인천 정신과 가로수)","subtitle":"감성 한 줄","body":"본문(단락구분 \\n\\n)","tags":["태그1","태그2","태그3","태그4","태그5"]}`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:systemPrompt,messages:[{role:'user',content:`주제:${category}/독자:${audience}/시의성:${season||'없음'}/도입:${introStyle}/추가:${extraNote||'없음'}`}]})
+      });
+      clearInterval(msgInterval);
+      if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||`HTTP ${res.status}`); }
+      const data = await res.json();
+      let raw = data.content[0].text.trim().replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+      const parsed = JSON.parse(raw);
+      currentPost = {...parsed, category, season, audience};
+      displayResult(parsed, category, season);
+      todayCount++;
+      document.getElementById('statsBadge').textContent = `오늘 생성: ${todayCount}편`;
+    } catch(e) {
+      clearInterval(msgInterval);
+      showState('errorState');
+      document.getElementById('errorMsg').textContent = `오류: ${e.message}\n\nAPI 키를 확인하거나 잠시 후 다시 시도해주세요.`;
+    }
+    document.getElementById('generateBtn').disabled = false;
+  }
+
+  function displayResult(data, category, season) {
+    const today = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('previewMeta').textContent = `📅 ${today}  ·  🏷 ${category}${season?' · '+season:''}`;
+    document.getElementById('previewTitle').textContent = data.title;
+    document.getElementById('previewSubtitle').textContent = data.subtitle;
+    const bodyEl = document.getElementById('previewBody');
+    bodyEl.innerHTML = '';
+    data.body.split('\n\n').forEach(para => { if(para.trim()){const p=document.createElement('p');p.textContent=para.trim();bodyEl.appendChild(p);} });
+    if (data.tags?.length) {
+      const d=document.createElement('div');
+      d.style.cssText='margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px;';
+      data.tags.forEach(t=>{const s=document.createElement('span');s.style.cssText='font-size:11px;padding:3px 10px;background:var(--sage-pale);color:var(--sage);border-radius:20px;';s.textContent='#'+t;d.appendChild(s);});
+      bodyEl.appendChild(d);
+    }
+    showState('resultState');
+  }
+
+  function copyPost() {
+    if (!currentPost) return;
+    const body=Array.from(document.getElementById('previewBody').querySelectorAll('p')).map(p=>p.textContent).join('\n\n');
+    navigator.clipboard.writeText(`${currentPost.title}\n\n${currentPost.subtitle}\n\n가로수정신건강의학과의원\n인천광역시 남동구 논고개로 114 2층\n\n${body}\n\n인천 가로수 정신건강의학과 이성철 원장`).then(()=>showToast('toastCopy'));
+  }
+
+  function saveToObsidian() {
+    if (!currentPost) return;
+    const today=new Date(), dateStr=today.toISOString().split('T')[0];
+    const dateKo=today.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+    const body=Array.from(document.getElementById('previewBody').querySelectorAll('p')).map(p=>p.textContent).join('\n\n');
+    const md=`---\ntitle: "${currentPost.title}"\ndate: ${dateStr}\ncategory: ${currentPost.category}\naudience: ${currentPost.audience}\ntags: [${currentPost.tags?.map(t=>`"${t}"`).join(', ')||''}]\nstatus: 검토중\n---\n\n# ${currentPost.title}\n\n> ${currentPost.subtitle}\n\n**가로수정신건강의학과의원**\n인천광역시 남동구 논고개로 114 2층\n\n---\n\n${body}\n\n---\n\n**인천 가로수 정신건강의학과 이성철 원장**\n\n*생성일: ${dateKo}*\n`;
+    const filename=`${dateStr}-${currentPost.category.replace(/[·\s\/]/g,'_')}.md`;
+    const blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+    document.getElementById('obsidianGuide').style.display='block';
+    showToast('toastObsidian');
+  }
+
+  function showToast(id) { const t=document.getElementById(id);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800); }
+</script>
+</body>
+</html>
